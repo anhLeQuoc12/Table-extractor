@@ -95,6 +95,11 @@ def detect_lines(img: np.ndarray, contours: Optional[List[Cell]], char_length: O
     :param min_line_length: minimum line length
     :return: horizontal and vertical rows
     """
+
+    # print(f"Img: {img}")
+    # print(f"Contours: {contours}")
+    print(f"Char length: {char_length}")
+    print(f"Min line length: {min_line_length}")
     # Grayscale and blurring
     blur = cv2.bilateralFilter(img, 3, 40, 80)
     gray = cv2.cvtColor(blur, cv2.COLOR_RGB2GRAY)

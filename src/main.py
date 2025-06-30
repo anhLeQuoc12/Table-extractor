@@ -4,6 +4,68 @@ from pathlib import Path
 from img2table.document import Image
 from img2table.ocr import TesseractOCR
 
+# image_from_path = Image(src="../input_images/page_13300.png")
+# output_file_name = f"../output/page_13300.xlsx"
+# tesseract_ocr = TesseractOCR(n_threads=1, lang="eng")
+# image_from_path.to_xlsx(output_file_name,
+#                     ocr=tesseract_ocr,
+#                     implicit_rows=False,
+#                     implicit_columns=False,
+#                     borderless_tables=True,
+#                     min_confidence=50
+#                     )
+
+# image_from_path = Image(src="../input_images/page_3.png")
+# output_file_name = f"../output/page_3.xlsx"
+# image_from_path.to_xlsx(output_file_name,
+#                     ocr=tesseract_ocr,
+#                     implicit_rows=False,
+#                     implicit_columns=False,
+#                     borderless_tables=True,
+#                     min_confidence=50
+#                     )
+
+# image_from_path = Image(src="../input_images/page_6.png")
+# output_file_name = f"../output/page_6.xlsx"
+# image_from_path.to_xlsx(output_file_name,
+#                     ocr=tesseract_ocr,
+#                     implicit_rows=False,
+#                     implicit_columns=False,
+#                     borderless_tables=True,
+#                     min_confidence=50
+#                     )
+
+# image_from_path = Image(src="../input_images/page_12.png")
+# output_file_name = f"../output/page_12.xlsx"
+# image_from_path.to_xlsx(output_file_name,
+#                     ocr=tesseract_ocr,
+#                     implicit_rows=False,
+#                     implicit_columns=False,
+#                     borderless_tables=True,
+#                     min_confidence=50
+#                     )
+
+# image_from_path = Image(src="../input_images/page_13.png")
+# output_file_name = f"../output/page_13.xlsx"
+# image_from_path.to_xlsx(output_file_name,
+#                     ocr=tesseract_ocr,
+#                     implicit_rows=False,
+#                     implicit_columns=False,
+#                     borderless_tables=True,
+#                     min_confidence=50
+#                     )
+
+# image_from_path = Image(src="../input_images/page_17.png")
+# output_file_name = f"../output/page_17.xlsx"
+# image_from_path.to_xlsx(output_file_name,
+#                     ocr=tesseract_ocr,
+#                     implicit_rows=False,
+#                     implicit_columns=False,
+#                     borderless_tables=True,
+#                     min_confidence=50
+#                     )
+
+
 dir_name = "../input_images/"
 images_paths = Path(dir_name).iterdir()
 tesseract_ocr = TesseractOCR(n_threads=1, lang="eng")

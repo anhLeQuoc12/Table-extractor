@@ -92,6 +92,10 @@ class OCRDataframe:
         """
         # Filter dataframe on relevant page
         df_words = self.df.filter(pl.col('class') == "ocrx_word")
+        pl.Config.set_tbl_rows(-1)
+        pl.Config.set_tbl_cols(-1)
+        # print(f"Dataframe words: {df_words.shape}")
+
         if page_number:
             df_words = df_words.filter(pl.col('page') == page_number)
         # Filter dataframe on relevant words
@@ -126,7 +130,7 @@ class OCRDataframe:
         )
 
         # Filter on words where its bbox is contained in area
-        df_words_contained = df_areas.filter(pl.col('int_area') / pl.col('w_area') > 0.5)
+        df_words_contained = df_areas.filter(pl.col('int_area') / pl.col('w_area') > 0.05)
 
         # Group text by parent
         df_text_parent = (df_words_contained

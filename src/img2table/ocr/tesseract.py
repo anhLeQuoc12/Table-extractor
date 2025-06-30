@@ -107,6 +107,9 @@ class TesseractOCR(OCRInstance):
 
         for page, hocr in enumerate(content):
             # Instantiate HTML parser
+            with open("../output/test.txt", "w", encoding="utf-8") as f:
+                f.write(hocr)
+
             soup = BeautifulSoup(hocr, features='html.parser')
 
             # Parse all HTML elements
