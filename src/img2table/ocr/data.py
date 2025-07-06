@@ -92,9 +92,6 @@ class OCRDataframe:
         """
         # Filter dataframe on relevant page
         df_words = self.df.filter(pl.col('class') == "ocrx_word")
-        pl.Config.set_tbl_rows(-1)
-        pl.Config.set_tbl_cols(-1)
-        # print(f"Dataframe words: {df_words.shape}")
 
         if page_number:
             df_words = df_words.filter(pl.col('page') == page_number)

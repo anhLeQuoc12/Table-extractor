@@ -4,8 +4,8 @@ from pathlib import Path
 from img2table.document import Image
 from img2table.ocr import TesseractOCR
 
-# image_from_path = Image(src="../input_images/page_13300.png")
-# output_file_name = f"../output/page_13300.xlsx"
+# image_from_path = Image(src="../input_images/page_12.png")
+# output_file_name = f"../output/page_12.xlsx"
 # tesseract_ocr = TesseractOCR(n_threads=1, lang="eng")
 # image_from_path.to_xlsx(output_file_name,
 #                     ocr=tesseract_ocr,

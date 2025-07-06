@@ -62,6 +62,10 @@ class TableImage:
         # Compute parameters for line detection
         min_line_length = int(min(0.75 * self.median_line_sep, 4 * self.char_length)) if self.median_line_sep else 20
 
+        print(f"Char length: {self.char_length}")
+        print(f"Median line sep: {self.median_line_sep}")
+        print(f"Min line length: {min_line_length}")
+
         # Detect rows in image
         h_lines, v_lines = detect_lines(img=self.img,
                                         contours=self.contours,
@@ -117,7 +121,8 @@ class TableImage:
                                                         existing_tables=self.tables)
 
             # Add to tables
-            self.tables += [tb for tb in borderless_tbs if tb.nb_rows >= 2 and tb.nb_columns >= 3]
+            self.tables += [tb for tb in borderless_tbs ]
+                            # if tb.nb_rows >= 2 and tb.nb_columns >= 3]
 
     def extract_tables(self, implicit_rows: bool = False, implicit_columns: bool = False, borderless_tables: bool = False) -> List[Table]:
         """
@@ -137,5 +142,8 @@ class TableImage:
         if borderless_tables:
             # Extract borderless tables
             self.extract_borderless_tables()
+
+        # print(f"Number tables: {self.tables.__len__()}")
+        # print(f"Borderless or not: {self.tables[0]._borderless}")
 
         return self.tables

@@ -162,6 +162,7 @@ def identify_delimiter_group_rows(column_group: ColumnGroup, contours: List[Cell
     """
     # Get row delimiters
     row_delimiters = identify_row_delimiters(column_group=column_group)
+    # print(f"Number of row delimiters: {len(row_delimiters)}")
 
     if row_delimiters:
         # Filter coherent delimiters

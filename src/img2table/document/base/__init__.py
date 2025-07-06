@@ -10,7 +10,7 @@ import numpy as np
 import xlsxwriter
 
 from img2table import Validations
-from img2table.tables.objects.extraction import ExtractedTable
+from img2table.tables.objects.extraction import CellPosition, ExtractedTable, create_all_rectangles
 
 if typing.TYPE_CHECKING:
     from img2table.ocr.base import OCRInstance
@@ -107,8 +107,9 @@ class Document(Validations):
         self.ocr_df = None
 
         return {k: [tb.extracted_table for tb in v
-                    if (max(tb.nb_rows, tb.nb_columns) >= 2 and not tb._borderless)
-                    or (tb.nb_rows >= 2 and tb.nb_columns >= 3)]
+                    # if (max(tb.nb_rows, tb.nb_columns) >= 2 and not tb._borderless)
+                    # or (tb.nb_rows >= 2 and tb.nb_columns >= 3)
+                    ]
                 for k, v in tables.items()}
 
     def extract_tables(self, ocr: "OCRInstance" = None, implicit_rows: bool = False, implicit_columns: bool = False,
@@ -130,10 +131,14 @@ class Document(Validations):
                                                                                 borderless_tables=borderless_tables)
                   for idx, img in enumerate(self.images)}
 
+
         # Update table content with OCR if possible
         tables = self.get_table_content(tables=tables,
                                         ocr=ocr,
                                         min_confidence=min_confidence)
+        for table in tables[0]:
+            print(table)
+
 
         # If pages have been defined, modify tables keys
         if self.pages:
@@ -172,13 +177,46 @@ class Document(Validations):
         cell_format.set_border()
 
         # For each extracted table, create a corresponding worksheet and populate it
+        # for page, tables in extracted_tables.items():
+        #     for idx, table in enumerate(tables):
+        #         # Create worksheet
+        #         sheet = workbook.add_worksheet(name=f"Page {page + 1} - Table {idx + 1}")
+
+        #         # Populate worksheet
+        #         table._to_worksheet(sheet=sheet, cell_fmt=cell_format)
+
+        sheet = workbook.add_worksheet()
+        nb_rows_existed = 0
         for page, tables in extracted_tables.items():
             for idx, table in enumerate(tables):
-                # Create worksheet
-                sheet = workbook.add_worksheet(name=f"Page {page + 1} - Table {idx + 1}")
+                if idx != 0:
+                    nb_rows_existed += 1
+                dict_cells = dict()
+                for id_row, row in table.content.items():
+                    for id_col, cell in enumerate(row):
+                        cell_pos = CellPosition(cell=cell, row=id_row + nb_rows_existed, col=id_col)
+                        dict_cells[hash(cell)] = dict_cells.get(hash(cell), []) + [cell_pos]
 
-                # Populate worksheet
-                table._to_worksheet(sheet=sheet, cell_fmt=cell_format)
+                # Write all cells to sheet
+                for c in dict_cells.values():
+                    if len(c) == 1:
+                        cell_pos = c.pop()
+                        sheet.write(cell_pos.row, cell_pos.col, cell_pos.cell.value, cell_format)
+                    else:
+                        # Get all rectangles
+                        for cell_span in create_all_rectangles(cell_positions=c):
+                            # Case of merged cells
+                            sheet.merge_range(first_row=cell_span.top_row,
+                                            first_col=cell_span.col_left,
+                                            last_row=cell_span.bottom_row,
+                                            last_col=cell_span.col_right,
+                                            data=cell_span.value,
+                                            cell_format=cell_format)
+
+                nb_rows_existed += len(table.content.values())
+                # Autofit worksheet
+
+        sheet.autofit()
 
         # Close workbook
         workbook.close()

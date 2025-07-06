@@ -33,6 +33,10 @@ def segment_image(thresh: np.ndarray, lines: List[Line], char_length: float,
     img_elements = get_image_elements(thresh=text_thresh,
                                       char_length=char_length,
                                       median_line_sep=median_line_sep)
+    
+    # print(f"Len of img_elems: {len(img_elements)}")
+    # for ele in img_elements:
+    #     print(ele.bbox())
 
     if len(img_elements) == 0:
         return []

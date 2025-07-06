@@ -55,6 +55,7 @@ def get_table_areas(segment: ImageSegment, char_length: float, median_line_sep: 
 
     for up, down in zip(h_ws, h_ws[1:]):
         idx += 1
+        
         # Get the delimited area
         delimited_area = Cell(x1=max(min(up.x1, down.x1) - int(char_length), 0),
                               y1=up.y2,
@@ -81,8 +82,9 @@ def get_table_areas(segment: ImageSegment, char_length: float, median_line_sep: 
             # Identify number of whitespaces that are not on borders
             middle_ws = [ws for ws in v_ws if ws.x1 != seg_area.x1 and ws.x2 != seg_area.x2]
 
-            # If there can be at least 3 columns in area, it is a possible table area
-            if len(middle_ws) >= 1:
+            # If there can be at least 3 columns in area, it is a possible table area (img2table)
+            # if len(middle_ws) >= 1: (img2table)
+            if len(middle_ws) >= 0:
                 # Add edges whitespaces
                 left_ws = Whitespace(cells=[Cell(x1=seg_area.x1,
                                                  y1=seg_area.y1,
@@ -149,6 +151,11 @@ def coherent_table_areas(tb_area_1: ImageSegment, tb_area_2: ImageSegment, char_
         ws_tb_1 = merge_consecutive_ws([ws for ws in tb_area_1.whitespaces if ws.y1 == tb_area_1.y1])
         ws_tb_2 = merge_consecutive_ws([ws for ws in tb_area_2.whitespaces if ws.y2 == tb_area_2.y2])
 
+    # If ws_tb_1 and ws_tb_2 both have 2 whitespaces, maybe there is a case the table only has 2 columns 
+    # and the values of 1 column are empty on these 2 rows. Then these 2 rows are coherent.
+    if (len(ws_tb_1) == 2) and (len(ws_tb_2) == 2):
+        return True
+    
     # Check whitespaces coherency on "middle" whitespaces
     if len(ws_tb_1) >= len(ws_tb_2):
         dict_ws_coherency = {

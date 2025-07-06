@@ -98,6 +98,7 @@ def identify_borderless_tables(thresh: np.ndarray, lines: List[Line], char_lengt
     tables = list()
     for table_segment in table_segments:
         # Identify column groups in segment
+
         column_group = identify_columns(table_segment=table_segment,
                                         char_length=char_length,
                                         median_line_sep=median_line_sep)
@@ -117,10 +118,11 @@ def identify_borderless_tables(thresh: np.ndarray, lines: List[Line], char_lengt
 
                 if borderless_table:
                     # Check table
-                    corrected_table = coherent_table(tb=borderless_table, elements=table_segment.elements)
+                    # corrected_table = coherent_table(tb=borderless_table, elements=table_segment.elements)
 
-                    if corrected_table:
-                        tables.append(corrected_table)
+                    # if corrected_table:
+                    #     tables.append(corrected_table)
+                    tables.append(borderless_table)
 
     return deduplicate_tables(identified_tables=tables,
                               existing_tables=existing_tables)
