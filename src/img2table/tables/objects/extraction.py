@@ -134,6 +134,7 @@ class ExtractedTable:
     bbox: BBox
     title: Optional[str]
     content: OrderedDict[int, List[TableCell]]
+    is_borderless: bool
 
     @property
     def df(self) -> pd.DataFrame:
@@ -176,24 +177,44 @@ class ExtractedTable:
 
         return BeautifulSoup(table_html, "html.parser").prettify().strip()
 
-    def _to_worksheet(self, sheet: Worksheet, cell_fmt: Optional[Format] = None):
+    def _to_worksheet(self, sheet: Worksheet, nb_upper_rows_existed: int = 0, title_format: Optional[Format] = None, 
+                      header_format: Optional[Format] = None, cell_fmt: Optional[Format] = None, 
+                      final_row_format: Optional[Format] = None):
         """
         Populate xlsx worksheet with table data
         :param sheet: xlsxwriter Worksheet
         :param cell_fmt: xlsxwriter cell format
-        """
+        """        
+        # Write table title if is bordered table
+        if (not self.is_borderless):
+            sheet.merge_range(f"A{nb_upper_rows_existed+1}:Z{nb_upper_rows_existed+1}", self.title, title_format)
+            nb_upper_rows_existed += 1
+
         # Group cells based on hash (merged cells are duplicated over multiple rows/columns in content)
         dict_cells = dict()
         for id_row, row in self.content.items():
             for id_col, cell in enumerate(row):
-                cell_pos = CellPosition(cell=cell, row=id_row, col=id_col)
+                cell_pos = CellPosition(cell=cell, row=nb_upper_rows_existed + id_row, col=id_col)
                 dict_cells[hash(cell)] = dict_cells.get(hash(cell), []) + [cell_pos]
 
         # Write all cells to sheet
+        nb_rows = len(self.content.keys())
+        nb_cols = len(self.content[0])
         for c in dict_cells.values():
+            format = header_format if (not self.is_borderless) and (c[0].row == nb_upper_rows_existed) else cell_fmt
             if len(c) == 1:
                 cell_pos = c.pop()
-                sheet.write(cell_pos.row, cell_pos.col, cell_pos.cell.value, cell_fmt)
+                sheet.write(cell_pos.row, cell_pos.col, cell_pos.cell.value, format)
+            # Detect rows that have all columns merge in 1 column
+            elif len(c) == nb_cols:
+                cell_pos = c.pop()
+                row_1_col_format = header_format if (cell_pos.row != nb_rows - 1 + nb_upper_rows_existed) else final_row_format
+                sheet.merge_range(first_row=cell_pos.row,
+                                first_col=0,
+                                last_row=cell_pos.row,
+                                last_col=nb_cols-1,
+                                data=cell_pos.cell.value,
+                                cell_format=row_1_col_format)
             else:
                 # Get all rectangles
                 for cell_span in create_all_rectangles(cell_positions=c):
@@ -203,10 +224,43 @@ class ExtractedTable:
                                       last_row=cell_span.bottom_row,
                                       last_col=cell_span.col_right,
                                       data=cell_span.value,
-                                      cell_format=cell_fmt)
+                                      cell_format=format)
 
         # Autofit worksheet
-        sheet.autofit()
+        # sheet.autofit()
+            
+        # Detect merged columns and set each column size corresponding to each column in the header row
+        row_0 = self.content.get(0)
+        list_row0_merged_cols = list()
+        col = 0
+        while (col < len(row_0)):
+            list_merged_cols = [col]
+            for next_col in range(col+1, len(row_0)):
+                if (hash(row_0[col]) == hash(row_0[next_col])):
+                    list_merged_cols.append(next_col)
+                else:
+                    break
+            if (len(list_merged_cols) > 1):
+                list_row0_merged_cols.append(list_merged_cols)
+            else:
+                list_row0_merged_cols.append(col)
+            col += len(list_merged_cols)
+        
+        # Here 0.35 is the ratio of the input images to fit the computer screen (15'6 inch), can be changed
+        for id_col in list_row0_merged_cols:
+            if (isinstance(id_col, int)):
+                # sheet.setro
+                cell = row_0[id_col]
+                sheet.set_column_pixels(first_col=id_col,
+                                        last_col=id_col,
+                                        width=0.35*(cell.bbox.x2 - cell.bbox.x1))
+            else:
+                cell = row_0[id_col[0]]
+                nb_merged_cols = len(id_col)
+                sheet.set_column_pixels(first_col=id_col[0],
+                                        last_col=id_col[-1],
+                                        width=0.35*(cell.bbox.x2 - cell.bbox.x1)/nb_merged_cols)
+                
 
     def html_repr(self, title: Optional[str] = None) -> str:
         """

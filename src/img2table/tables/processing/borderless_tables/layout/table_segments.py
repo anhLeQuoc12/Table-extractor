@@ -140,7 +140,8 @@ def coherent_table_areas(tb_area_1: ImageSegment, tb_area_2: ImageSegment, char_
     v_diff = max(tb_area_1.y1, tb_area_2.y1) - min(tb_area_1.y2, tb_area_2.y2)
 
     # If areas are not consecutive or with too much separation, not coherent
-    if abs(tb_area_1.position - tb_area_2.position) != 1 or v_diff > 2.5 * median_line_sep:
+    # Here 75 is max distance of rows for borderless table in the example images
+    if abs(tb_area_1.position - tb_area_2.position) != 1 or v_diff > min(2.5 * median_line_sep, 75):
         return False
 
     # Get relevant whitespaces

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 import polars as pl
 
+from img2table.document.initial_main_texts import InitialMainTexts
 from img2table.tables.objects.cell import Cell
 from img2table.tables.objects.table import Table
 
@@ -127,7 +128,7 @@ class OCRDataframe:
         )
 
         # Filter on words where its bbox is contained in area
-        df_words_contained = df_areas.filter(pl.col('int_area') / pl.col('w_area') > 0.05)
+        df_words_contained = df_areas.filter(pl.col('int_area') / pl.col('w_area') > 0.5)
 
         # Group text by parent
         df_text_parent = (df_words_contained
@@ -139,14 +140,43 @@ class OCRDataframe:
                                 pl.col('value').map_elements(lambda x: ' '.join(x), return_dtype=str).alias('value')])
                           .sort([pl.col("row"), pl.col("col"), pl.col('y1'), pl.col('x1')])
                           .group_by(['row', 'col'])
-                          .agg(pl.col('value').map_elements(lambda x: '\n'.join(x).strip(), return_dtype=str).alias('text'))
+                          .agg([pl.col('x1'),
+                                pl.col('x2'),
+                                pl.col('y1'),
+                                pl.col('y2'),
+                                pl.col('value')])
                           )
+        
 
         # Implement found values to table cells content
         for rec in df_text_parent.to_dicts():
-            table.items[rec.get('row')].items[rec.get('col')].content = rec.get('text') or None
+            list_x1 = rec['x1']
+            list_x2 = rec['x2']
+            list_y1 = rec['y1']
+            list_y2 = rec['y2']
+            list_texts = rec['value']
+            nb_texts = len(list_texts)
+            cell_text = list_texts[0]
+            
+            if (nb_texts > 1):
+                for index in range(0, nb_texts):
+                    if (index == nb_texts-1):
+                        break
+                    else:
+                        x_distance = list_x1[index+1] - list_x2[index]
+                        y_distance = list_y1[index+1] - list_y2[index]
+                        if (x_distance > 0) and (y_distance < 0):
+                            nb_spaces = x_distance // 20
+                            for i in range(0, nb_spaces):
+                                cell_text += '  '
+                        elif (x_distance < 0) and (y_distance > 0):
+                            cell_text += "\n"
+                        cell_text += list_texts[index+1]
+
+            table.items[rec.get('row')].items[rec.get('col')].content = cell_text or None
 
         return table
+    
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

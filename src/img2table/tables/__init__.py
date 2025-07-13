@@ -13,6 +13,7 @@ def threshold_dark_areas(img: np.ndarray, char_length: Optional[float]) -> np.nd
     :param char_length: average character length
     :return: threshold image
     """
+    # print(f"img: {img}")
     # Convert to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
@@ -25,7 +26,10 @@ def threshold_dark_areas(img: np.ndarray, char_length: Optional[float]) -> np.nd
     # Threshold original image
     t_sauvola = cv2.ximgproc.niBlackThreshold(gray, 255, cv2.THRESH_BINARY_INV, thresh_kernel, 0.2,
                                               binarizationMethod=cv2.ximgproc.BINARIZATION_SAUVOLA)
+    # print(f"t_sauvola: {t_sauvola}")
     thresh = 255 * (gray <= t_sauvola).astype(np.uint8)
+    # print(f"gray <= t_sauvola: {gray <= t_sauvola}")
+    # print(f"thresh: {thresh}")
     binary_thresh = None
 
     # Mask on areas with dark background

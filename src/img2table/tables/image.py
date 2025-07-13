@@ -143,7 +143,4 @@ class TableImage:
             # Extract borderless tables
             self.extract_borderless_tables()
 
-        # print(f"Number tables: {self.tables.__len__()}")
-        # print(f"Borderless or not: {self.tables[0]._borderless}")
-
         return self.tables

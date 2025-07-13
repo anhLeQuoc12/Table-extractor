@@ -40,7 +40,7 @@ def coherent_table(tb: Table, elements: List[Cell]) -> Optional[Table]:
                 .with_columns(area_overlap=pl.col("x_overlap") * pl.col("y_overlap"))
                 .filter(pl.col("area_overlap") / pl.col("area") >= 0.5)
                 .group_by("row_id").len()
-                .filter(pl.col("len") > 1)
+                .filter(pl.col("len") >= 1)
                 .select(pl.col("row_id").min().alias("min_row"), pl.col("row_id").max().alias("max_row"))
                 .to_dicts()
                 )
@@ -48,7 +48,7 @@ def coherent_table(tb: Table, elements: List[Cell]) -> Optional[Table]:
     if len(rel_rows) > 0:
         # Get new rows
         new_rows = tb.items[rel_rows[0].get("min_row"):rel_rows[0].get("max_row") + 1]
-        if len(new_rows) >= 2:
+        if len(new_rows) >= 1:
             return Table(rows=new_rows, borderless=True)
 
     return None
@@ -98,7 +98,6 @@ def identify_borderless_tables(thresh: np.ndarray, lines: List[Line], char_lengt
     tables = list()
     for table_segment in table_segments:
         # Identify column groups in segment
-
         column_group = identify_columns(table_segment=table_segment,
                                         char_length=char_length,
                                         median_line_sep=median_line_sep)
@@ -118,11 +117,11 @@ def identify_borderless_tables(thresh: np.ndarray, lines: List[Line], char_lengt
 
                 if borderless_table:
                     # Check table
-                    # corrected_table = coherent_table(tb=borderless_table, elements=table_segment.elements)
+                    corrected_table = coherent_table(tb=borderless_table, elements=table_segment.elements)
 
-                    # if corrected_table:
-                    #     tables.append(corrected_table)
-                    tables.append(borderless_table)
+                    if corrected_table:
+                        tables.append(corrected_table)
+                        
 
     return deduplicate_tables(identified_tables=tables,
                               existing_tables=existing_tables)

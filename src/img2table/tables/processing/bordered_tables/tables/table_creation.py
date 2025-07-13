@@ -94,7 +94,10 @@ def remove_unwanted_elements(table: Table, elements: List[Cell]) -> Table:
     empty_cols = sorted([row.get("id_col") for row in df_empty_cols.to_dicts()
                          if not row.get("contains") or (not row.get('merged_row') and not row.get('single_contains'))])
 
-    # Remove empty rows and empty columns
+    # Remove empty rows and empty columns that are unintentionally inserted into table
+    # See add_semi_bordered_cells in semi_bordered.py for more detail
+    empty_rows = [r for r in empty_rows if (r == 0) or (r == table.nb_rows-1)]
+    empty_cols = [c for c in empty_cols if (c == 0) or (c == table.nb_columns-1)]
     table.remove_rows(row_ids=empty_rows)
     table.remove_columns(col_ids=empty_cols)
 
@@ -150,5 +153,6 @@ def cluster_to_table(cluster_cells: List[Cell], elements: List[Cell], borderless
 
     # Remove empty/unnecessary rows and columns from the table, based on elements
     processed_table = remove_unwanted_elements(table=table, elements=elements)
+    # table.remove_rows([0])
 
     return processed_table

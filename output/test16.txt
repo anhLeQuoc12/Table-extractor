@@ -1,0 +1,269 @@
+MASTER PACKAGE
+
+WesternGlove Centric8 PROD
+
+M12225BVS563:KONRAD
+
+DUP REVIEW
+
+Revised 1/9/25, 2:47 PM
+
+Season
+
+2025 - Q3 - FALL
+
+Pattern Number
+
+M12225BVSCONTSEP2424WG
+
+Revision Description
+
+PKT BAG - FREE & STRAIGHT
+
+(BTM FOLD)
+
+Evaluation
+
+Dim
+
+Description
+
+Tol
+
+Tol
+
+32
+
+Review
+
+Comment
+
+(-)
+
+(+)
+
+DUP REVIEW
+
+Comment
+
+Target
+
+WGW
+
+WGW Actual
+
+Revised
+
+Actual
+
+Delta
+
+Boo!1
+
+WAIST RELAXED (TOP OF BAND)
+
+V5
+
+%
+
+33%
+
+33%
+
+Yq
+
+34
+
+BOoo2
+
+WAIST RELAXED (BOTTOM OF BAND)
+
+V5
+
+%
+
+34%
+
+35
+
+%
+
+35
+
+WILL USE NEW PATTERN#
+
+M12225BVSCONTJANO325WG
+
+BOO3
+
+WAISTBAND HEIGHT
+
+fe)
+
+Ve
+
+%e
+
+1%
+
+1%
+
+1%
+
+BO10
+
+FRONT TO BACK PITCH
+
+1%
+
+1%
+
+1%
+
+BO27
+
+FRONT RISE (BELOW WAISTBAND)
+
+Ve
+
+%e
+
+8%,
+
+8%,
+
+8%,
+
+BO28
+
+BACK RISE (BELOW WAISTBAND)
+
+Ve
+
+%e
+
+13%
+
+13 Y%
+
+Vp
+
+13 %
+
+BO30
+
+LOW HIP 3 3/4" FROM CROTCH
+
+40
+
+41
+
+V5
+
+%
+
+40 >
+
+%
+
+BOoO41
+
+THIGH 1" BELOW CROTCH
+
+24
+
+4,
+
+Yq
+
+24,
+
+Yq
+
+24%
+
+BO45a
+
+MID-THIGH 7" BELOW CROTCH (MENS new sz
+
+19
+
+19
+
+4,
+
+Yq
+
+19 %
+
+breaks)
+
+BO55a
+
+KNEE 13 1/2" BELOW CROTCH (FOR 29/30" INSEAM)
+
+4,
+
+Yq
+
+16 1%
+
+16 Y%
+
+BO56a
+
+KNEE 14" BELOW CROTCH (FOR 31/32" INSEAM)
+
+Vy
+
+Yq
+
+16 1%
+
+16%
+
+Yq
+
+16 Y%
+
+BO57a
+
+KNEE 14 1/2" BELOW CROTCH (FOR 33/34" INSEAM)
+
+4,
+
+Yq
+
+16 1%
+
+16 Y%
+
+BO58a
+
+KNEE 15" BELOW CROTCH (FOR 35/36/37" INSEAM)
+
+4,
+
+Yq
+
+16 1%
+
+16 Y%
+
+BO75B
+
+MID CALF 19 1/2" BELOW CROTCH (INSEAM 29/30")
+
+4,
+
+Yq
+
+16
+
+16
+
+Units: Fractions of inches
+
+Displaying 1 - 14 of 49 results
+
+Page 16 of 23

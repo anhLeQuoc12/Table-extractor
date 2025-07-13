@@ -2,14 +2,16 @@
 import typing
 from dataclasses import dataclass
 from functools import cached_property
-from typing import List
+from typing import Dict, List
 
 import cv2
 import numpy as np
 
-from img2table.document.base import Document
+from img2table.document.base import Document, MockDocument
 from img2table.document.base.rotation import fix_rotation_image
+from img2table.document.initial_main_texts import InitialMainTexts
 from img2table.tables.objects.extraction import ExtractedTable
+from img2table.tables.objects.table import Table
 
 if typing.TYPE_CHECKING:
     from img2table.ocr.base import OCRInstance
@@ -33,19 +35,20 @@ class Image(Document):
             return [rotated_img]
         else:
             return [img]
+        
 
-    def extract_tables(self, ocr: "OCRInstance" = None, implicit_rows: bool = False, implicit_columns: bool = False,
-                       borderless_tables: bool = False, min_confidence: int = 50) -> List[ExtractedTable]:
+    def extract_content(self, ocr: "OCRInstance" = None, implicit_rows: bool = False, implicit_columns: bool = False,
+                       borderless_tables: bool = False, min_confidence: int = 50) -> tuple[InitialMainTexts, List[ExtractedTable]]:
         """
-        Extract tables from document
+        Extract initial main texts and tables from document
         :param ocr: OCRInstance object used to extract table content
         :param implicit_rows: boolean indicating if implicit rows are splitted
         :param implicit_columns: boolean indicating if implicit columns are splitted
         :param borderless_tables: boolean indicating if borderless tables should be detected
         :param min_confidence: minimum confidence level from OCR in order to process text, from 0 (worst) to 99 (best)
-        :return: list of extracted tables
+        :return: The initial main texts and list of extracted tables in the image
         """
-        extracted_tables = super(Image, self).extract_tables(ocr=ocr,
+        extracted_tables = super(Image, self).extract_content(ocr=ocr,
                                                              implicit_rows=implicit_rows,
                                                              implicit_columns=implicit_columns,
                                                              borderless_tables=borderless_tables,

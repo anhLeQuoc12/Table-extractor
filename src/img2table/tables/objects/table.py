@@ -164,6 +164,7 @@ class Table(TableObject):
         :return: Table object with data attribute containing dataframe
         """
         # Get content for each cell
+        print(f"Table nb rows: {self.nb_rows}, nb cols: {self.nb_columns}")
         self = ocr_df.get_text_table(table=self, min_confidence=min_confidence)
 
         # Check for empty rows and remove if necessary
@@ -181,6 +182,7 @@ class Table(TableObject):
         #         empty_cols.append(idx)
         # self.remove_columns(col_ids=empty_cols)
 
+        print(f"Table nb rows: {self.nb_rows}, nb cols: {self.nb_columns}")
         # Check for uniqueness of content
         unique_cells = set([cell for row in self.items for cell in row.items])
         if len(unique_cells) == 1:
@@ -192,7 +194,7 @@ class Table(TableObject):
     def extracted_table(self) -> ExtractedTable:
         bbox = BBox(x1=self.x1, x2=self.x2, y1=self.y1, y2=self.y2)
         content = OrderedDict({idx: [cell.table_cell for cell in row.items] for idx, row in enumerate(self.items)})
-        return ExtractedTable(bbox=bbox, title=self.title, content=content)
+        return ExtractedTable(bbox=bbox, title=self.title, content=content, is_borderless=self._borderless)
 
     def __eq__(self, other) -> bool:
         if isinstance(other, self.__class__):

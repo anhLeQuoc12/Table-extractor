@@ -45,7 +45,7 @@ def get_title_tables(img: np.ndarray, tables: List[Table], ocr_df: OCRDataframe,
         x_bounds = [(del_1, del_2) for del_1, del_2 in zip(x_delimiters, x_delimiters[1:])]
 
         # Compute vertical boundaries of title
-        y_bounds = (max([tb.y2 for tb in tb_cl[id_cl - 1]]) if id_cl > 0 else 0, min([tb.y1 for tb in cluster]))
+        y_bounds = (max([tb.y2 for tb in tb_cl[id_cl - 1]]) if id_cl > 0 else 150, min([tb.y1 for tb in cluster]))
 
         # Fetch title for each table
         for id_tb, table in enumerate(cluster):

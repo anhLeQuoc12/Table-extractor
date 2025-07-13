@@ -33,10 +33,9 @@ def segment_image(thresh: np.ndarray, lines: List[Line], char_length: float,
     img_elements = get_image_elements(thresh=text_thresh,
                                       char_length=char_length,
                                       median_line_sep=median_line_sep)
-    
-    # print(f"Len of img_elems: {len(img_elements)}")
-    # for ele in img_elements:
-    #     print(ele.bbox())
+
+    # Filter elements that are not 2 initial lines of main texts
+    img_elements = [el for el in img_elements if el.y2 >= 200]
 
     if len(img_elements) == 0:
         return []
