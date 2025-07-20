@@ -9,7 +9,7 @@ import numpy as np
 
 from img2table.document.base import Document, MockDocument
 from img2table.document.base.rotation import fix_rotation_image
-from img2table.document.initial_main_texts import InitialMainTexts
+from img2table.document.other_texts_images import InitialMainTexts
 from img2table.tables.objects.extraction import ExtractedTable
 from img2table.tables.objects.table import Table
 
@@ -29,7 +29,6 @@ class Image(Document):
     @cached_property
     def images(self) -> List[np.ndarray]:
         img = cv2.imdecode(np.frombuffer(self.bytes, np.uint8), cv2.IMREAD_COLOR)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         if self.detect_rotation:
             rotated_img, _ = fix_rotation_image(img=img)
             return [rotated_img]

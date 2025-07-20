@@ -1,5 +1,6 @@
 # coding: utf-8
 from dataclasses import dataclass
+from typing import Any
 
 from img2table.tables.objects import TableObject
 from img2table.tables.objects.extraction import TableCell, BBox
@@ -11,7 +12,7 @@ class Cell(TableObject):
     y1: int
     x2: int
     y2: int
-    content: str = None
+    content: Any = None
 
     @property
     def table_cell(self) -> TableCell:

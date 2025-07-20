@@ -13,7 +13,7 @@ import polars as pl
 from bs4 import BeautifulSoup, NavigableString
 
 from img2table.document.base import Document
-from img2table.document.initial_main_texts import InitialMainTexts
+from img2table.document.other_texts_images import InitialMainTexts
 from img2table.ocr.base import OCRInstance
 from img2table.ocr.data import OCRDataframe
 
@@ -97,14 +97,14 @@ class TesseractOCR(OCRInstance):
 
         return hocrs
 
-    def get_initial_main_texts_and_ocr_dataframes(self, content: List[str]) -> list[tuple[InitialMainTexts, OCRDataframe]]:
+    def get_ocr_dataframes(self, content: List[str]) -> list[OCRDataframe]:
         """
-        Convert hOCR HTML to list of initial main texts and OCRDataframe object
+        Convert hOCR HTML to list of OCRDataframe object
         :param content: hOCR HTML string
-        :return: list of initial main texts and OCRDataframe object for each page corresponding to content
+        :return: list of OCRDataframe object for each page corresponding to content parameter
         """
         # Create list of dataframes for each page
-        list_imts_dfs = list()
+        list_dfs = list()
 
         for page, hocr in enumerate(content):
             # Instantiate HTML parser
@@ -112,7 +112,6 @@ class TesseractOCR(OCRInstance):
 
             # Parse all HTML elements
             list_elements = list()
-            imt = InitialMainTexts()
             prev_x = 0
             max_y = 0
             for element in soup.find_all(class_=True):
@@ -140,50 +139,50 @@ class TesseractOCR(OCRInstance):
                 list_elements.append(d_el)
 
                 # Retrieve initial main texts
-                if (element["class"][0] == "ocr_carea"):
-                    if (not imt.line1):
-                        line1 = ''
-                        for index, desc in enumerate(element.descendants):
-                            if (not isinstance(desc, NavigableString)) and (desc["class"][0] == "ocrx_word"):
-                                if index == 0: 
-                                    line1 += desc.text
-                                else:
-                                    line1 += ' ' + desc.text
+                # if (element["class"][0] == "ocr_carea"):
+                #     if (not imt.line1):
+                #         line1 = ''
+                #         for index, desc in enumerate(element.descendants):
+                #             if (not isinstance(desc, NavigableString)) and (desc["class"][0] == "ocrx_word"):
+                #                 if index == 0: 
+                #                     line1 += desc.text
+                #                 else:
+                #                     line1 += ' ' + desc.text
 
-                        imt.line1 = line1
-                        max_y = d_el["y2"]
-                    elif not imt.line2:
-                        line2 = ''
-                        for index, desc in enumerate(element.descendants):
-                            if (not isinstance(desc, NavigableString)) and (desc["class"][0] == "ocrx_word"):
-                                if index == 0: 
-                                    line2 += desc.text
-                                else:
-                                    line2 += ' ' + desc.text
+                #         imt.line1 = line1
+                #         max_y = d_el["y2"]
+                #     elif not imt.line2:
+                #         line2 = ''
+                #         for index, desc in enumerate(element.descendants):
+                #             if (not isinstance(desc, NavigableString)) and (desc["class"][0] == "ocrx_word"):
+                #                 if index == 0: 
+                #                     line2 += desc.text
+                #                 else:
+                #                     line2 += ' ' + desc.text
 
-                        imt.line2 = line2
-                        prev_x = d_el["x2"]
-                        max_y = d_el["y2"]
-                    elif (d_el["y2"] >= max_y - 10) and (d_el["y2"] <= max_y + 10):
-                        text = ''
-                        for index, desc in enumerate(element.descendants):
-                            if (not isinstance(desc, NavigableString)) and (desc["class"][0] == "ocrx_word"):
-                                if index == 0: 
-                                    text += desc.text
-                                else:
-                                    text += ' ' + desc.text
+                #         imt.line2 = line2
+                #         prev_x = d_el["x2"]
+                #         max_y = d_el["y2"]
+                #     elif (d_el["y2"] >= max_y - 10) and (d_el["y2"] <= max_y + 10):
+                #         text = ''
+                #         for index, desc in enumerate(element.descendants):
+                #             if (not isinstance(desc, NavigableString)) and (desc["class"][0] == "ocrx_word"):
+                #                 if index == 0: 
+                #                     text += desc.text
+                #                 else:
+                #                     text += ' ' + desc.text
 
-                        nb_tabs = int((d_el["x1"] - prev_x) / 50)
-                        tabs = ''
-                        for i in range (0, nb_tabs):
-                            tabs += '    '
-                        imt.line2 += tabs + text
-                        prev_x = d_el["x2"]
+                #         nb_tabs = int((d_el["x1"] - prev_x) / 50)
+                #         tabs = ''
+                #         for i in range (0, nb_tabs):
+                #             tabs += '    '
+                #         imt.line2 += tabs + text
+                #         prev_x = d_el["x2"]
 
 
             # Create dataframe
             if list_elements:
-                list_imts_dfs.append((imt, OCRDataframe(pl.DataFrame(data=list_elements, schema=self.pl_schema))))
+                list_dfs.append(OCRDataframe(pl.DataFrame(data=list_elements, schema=self.pl_schema)))
 
-        return list_imts_dfs if list_imts_dfs else None
+        return list_dfs if list_dfs else None
     

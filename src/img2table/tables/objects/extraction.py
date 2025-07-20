@@ -179,7 +179,7 @@ class ExtractedTable:
 
     def _to_worksheet(self, sheet: Worksheet, nb_upper_rows_existed: int = 0, title_format: Optional[Format] = None, 
                       header_format: Optional[Format] = None, cell_fmt: Optional[Format] = None, 
-                      final_row_format: Optional[Format] = None):
+                      final_row_format: Optional[Format] = None, link_format: Optional[Format] = None):
         """
         Populate xlsx worksheet with table data
         :param sheet: xlsxwriter Worksheet
@@ -204,7 +204,13 @@ class ExtractedTable:
             format = header_format if (not self.is_borderless) and (c[0].row == nb_upper_rows_existed) else cell_fmt
             if len(c) == 1:
                 cell_pos = c.pop()
-                sheet.write(cell_pos.row, cell_pos.col, cell_pos.cell.value, format)
+                if cell_pos.cell.value == None:
+                    sheet.write(cell_pos.row, cell_pos.col, None, format)   
+                else:   
+                    if (cell_pos.cell.value[1] == None):
+                        sheet.write(cell_pos.row, cell_pos.col, cell_pos.cell.value[0], format)   
+                    else:
+                        sheet.write_rich_string(cell_pos.row, cell_pos.col, format, cell_pos.cell.value[0] or "", link_format, f"\n{cell_pos.cell.value[1]}", cell_fmt)
             # Detect rows that have all columns merge in 1 column
             elif len(c) == nb_cols:
                 cell_pos = c.pop()
@@ -213,7 +219,7 @@ class ExtractedTable:
                                 first_col=0,
                                 last_row=cell_pos.row,
                                 last_col=nb_cols-1,
-                                data=cell_pos.cell.value,
+                                data=cell_pos.cell.value[0],
                                 cell_format=row_1_col_format)
             else:
                 # Get all rectangles

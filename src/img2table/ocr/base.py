@@ -4,7 +4,7 @@ from typing import Any
 import polars as pl
 
 from img2table.document.base import Document
-from img2table.document.initial_main_texts import InitialMainTexts
+from img2table.document.other_texts_images import OtherTextsAndImages
 from img2table.ocr.data import OCRDataframe
 
 
@@ -28,17 +28,17 @@ class OCRInstance:
     def content(self, document: Document) -> Any:
         raise NotImplementedError
 
-    def get_initial_main_texts_and_ocr_dataframes(self, content: Any) -> list[tuple[InitialMainTexts, OCRDataframe]]:
+    def get_ocr_dataframes(self, content: Any) -> list[OCRDataframe]:
         raise NotImplementedError
 
-    def of(self, document: Document) -> list[tuple[InitialMainTexts, OCRDataframe]]:
+    def of(self, document: Document) -> list[OCRDataframe]:
         """
-        Extract text from Document to a tuple of initial main texts and OCRDataframe object for each page
+        Extract text from Document to list of OCRDataframe objects for each page
         :param document: Document object
-        :return: list of tuple containing initial main texts and OCRDataframe object for each page
+        :return: list of OCRDataframe object for each page
         """
         # Extract content from document
         content = self.content(document=document)
 
-        # Create OCRDataframe from content
-        return self.get_initial_main_texts_and_ocr_dataframes(content=content)
+        # Create list OCRDataframe from content
+        return self.get_ocr_dataframes(content=content)

@@ -13,7 +13,6 @@ def threshold_dark_areas(img: np.ndarray, char_length: Optional[float]) -> np.nd
     :param char_length: average character length
     :return: threshold image
     """
-    # print(f"img: {img}")
     # Convert to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 

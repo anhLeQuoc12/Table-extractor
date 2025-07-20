@@ -257,6 +257,8 @@ def compute_char_length(thresh: np.ndarray) -> Tuple[Optional[float], Optional[n
     """
     # Connected components
     _, cc_labels, stats, _ = cv2.connectedComponentsWithStats(thresh, 8, cv2.CV_32S)
+    np.set_printoptions(threshold=np.inf)
+    print(f"Len of cc_labels, cc_lables[0], stats: {len(cc_labels)}, {len(cc_labels[0])}, {len(stats)}")
 
     # Remove dots
     stats = remove_dots(cc_labels=cc_labels, stats=stats)
@@ -271,6 +273,14 @@ def compute_char_length(thresh: np.ndarray) -> Tuple[Optional[float], Optional[n
     # Remove dotted lines
     complete_stats = np.c_[stats, (2 * stats[:, 0] + stats[:, 2]) / 2, (2 * stats[:, 1] + stats[:, 3]) / 2]
     stats = remove_dotted_lines(complete_stats=complete_stats)
+
+    # with open("../output/page3-image-cc.txt", "a") as f:
+    #     # f.write(f"\n\nafter remove dotted lines stats:\n{stats}")
+    #     s2 = [s for s in stats if (s[0] > 2720 and s[1] > 720 and s[0] + s[2] < 2900 and s[1] + s[3] < 1000)]
+    #     f.write(f"\n\nafter remove dotted lines image stats:")
+    #     for s in s2:
+    #         f.write(f"\n{s}")
+    print(f"Len of mask, after remove dotted lines stats: {len(mask_pixels)}, {len(stats)}")
 
     if len(stats) == 0:
         return None, None, None

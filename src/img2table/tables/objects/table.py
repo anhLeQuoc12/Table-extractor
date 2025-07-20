@@ -1,4 +1,5 @@
 # coding: utf-8
+from pathlib import Path
 import typing
 from collections import OrderedDict
 from functools import cached_property
@@ -156,16 +157,17 @@ class Table(TableObject):
             for id_row in range(self.nb_rows):
                 self.items[id_row].items.pop(idx)
 
-    def get_content(self, ocr_df: "OCRDataframe", min_confidence: int = 50) -> "Table":
+    def get_content(self, src_img: np.ndarray, ocr_df: "OCRDataframe", dest_path: Path, min_confidence: int = 50) -> "Table":
         """
         Retrieve text from OCRDataframe object and reprocess table to remove empty rows / columns
+        :param src_img: The source image in which table was detected
         :param ocr_df: OCRDataframe object
+        :param dest_path: The Path object containing destination path
         :param min_confidence: minimum confidence in order to include a word, from 0 (worst) to 99 (best)
         :return: Table object with data attribute containing dataframe
         """
         # Get content for each cell
-        print(f"Table nb rows: {self.nb_rows}, nb cols: {self.nb_columns}")
-        self = ocr_df.get_text_table(table=self, min_confidence=min_confidence)
+        self = ocr_df.get_text_table(table=self, src_img=src_img, dest_path=dest_path, min_confidence=min_confidence)
 
         # Check for empty rows and remove if necessary
         # empty_rows = list()

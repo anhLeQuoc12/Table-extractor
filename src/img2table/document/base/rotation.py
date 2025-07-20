@@ -241,7 +241,7 @@ def fix_rotation_image(img: np.ndarray) -> Tuple[np.ndarray, bool]:
     :return: rotated image array and boolean indicating if the image has been rotated
     """
     # Get connected components of the images
-    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     cc_centroids, ref_height, thresh = get_connected_components(img=gray)
 
     # Check number of centroids

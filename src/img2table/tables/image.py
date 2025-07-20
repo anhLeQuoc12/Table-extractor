@@ -31,9 +31,10 @@ class TableImage:
     lines: List[Line] = None
     tables: List[Table] = None
 
-    def __post_init__(self):
+    def __post_init__(self):        
+        self.img = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
         self.thresh = threshold_dark_areas(img=self.img, char_length=11)
-
+        
         # Compute image metrics
         self.char_length, self.median_line_sep, self.contours = compute_img_metrics(thresh=self.thresh.copy())
 
